@@ -4,14 +4,28 @@ import Image from 'next/image'
 import Layout from '@/components/Layout'
 import { API_URL } from '@/config/index'
 import styles from '@/styles/Event.module.css'
+import axios from 'axios'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import { useRouter } from 'next/router'
 
 export default function EventPage({ evt }) {
-  const deleteEvent = (e) => {
-    console.log('delete')
+  const router = useRouter()
+  const deleteEvent = async (e) => {
+    if (confirm('Are you sure?')) {
+      const { data } = await axios.delete(`${API_URL}/events/${evt.id}`)
+      console.log(data)
+      if (!data) {
+        toast.error('Something went wrong')
+      } else {
+        router.push('/events')
+      }
+    }
   }
 
   return (
-    <Layout>
+    <Layout title={evt.name}>
+      <ToastContainer theme='dark' />
       <div className={styles.event}>
         <div className={styles.controls}>
           <Link href={`/events/edit/${evt.id}`}>
