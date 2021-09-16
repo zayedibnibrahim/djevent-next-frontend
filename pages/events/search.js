@@ -23,7 +23,7 @@ export async function getServerSideProps({ query: { term } }) {
     _where: {
       _or: [
         { name_contains: term },
-        { performers: term },
+        { performers_contains: term },
         { description_contains: term },
         { venue_contains: term },
       ],
