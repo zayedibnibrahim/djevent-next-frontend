@@ -31,6 +31,7 @@ export default function EditEventPage({ evt }) {
   )
 
   const [showModal, setShowModal] = useState(false)
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     const hasEmptyFields = Object.values(values).some(

@@ -14,7 +14,6 @@ export default function EventPage({ evt }) {
   const deleteEvent = async (e) => {
     if (confirm('Are you sure?')) {
       const { data } = await axios.delete(`${API_URL}/events/${evt.id}`)
-      console.log(data)
       if (!data) {
         toast.error('Something went wrong')
       } else {
