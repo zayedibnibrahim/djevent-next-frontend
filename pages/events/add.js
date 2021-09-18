@@ -4,7 +4,6 @@ import Layout from '@/components/Layout'
 import Link from 'next/link'
 import styles from '@/styles/Form.module.css'
 import { useState } from 'react'
-import axios from 'axios'
 import { API_URL } from '@/config/index'
 import { useRouter } from 'next/router'
 
@@ -23,23 +22,29 @@ export default function AddEventPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    // Validation
     const hasEmptyFields = Object.values(values).some(
       (element) => element === ''
     )
+
     if (hasEmptyFields) {
-      toast.error('Please fill all fields')
+      toast.error('Please fill in all fields')
+    }
+
+    const res = await fetch(`${API_URL}/events`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(values),
+    })
+
+    if (!res.ok) {
+      toast.error('Something Went Wrong')
     } else {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-      const { data } = await axios.post(`${API_URL}/events`, values, config)
-      if (!data) {
-        toast.error('Something Went Wrong')
-      } else {
-        router.push(`/events/${data.slug}`)
-      }
+      const evt = await res.json()
+      router.push(`/events/${evt.slug}`)
     }
   }
 

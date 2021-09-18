@@ -7,7 +7,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import styles from '@/styles/Form.module.css'
 import { useState } from 'react'
-import axios from 'axios'
 import { API_URL } from '@/config/index'
 import { useRouter } from 'next/router'
 import { FaImage } from 'react-icons/fa'
@@ -34,27 +33,29 @@ export default function EditEventPage({ evt }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    // Validation
     const hasEmptyFields = Object.values(values).some(
       (element) => element === ''
     )
+
     if (hasEmptyFields) {
-      toast.error('Please fill all fields')
+      toast.error('Please fill in all fields')
+    }
+
+    const res = await fetch(`${API_URL}/events/${evt.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(values),
+    })
+
+    if (!res.ok) {
+      toast.error('Something Went Wrong')
     } else {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-      const { data } = await axios.put(
-        `${API_URL}/events/${evt.id}`,
-        values,
-        config
-      )
-      if (!data) {
-        toast.error('Something Went Wrong')
-      } else {
-        router.push(`/events/${data.slug}`)
-      }
+      const evt = await res.json()
+      router.push(`/events/${evt.slug}`)
     }
   }
 
@@ -175,11 +176,15 @@ export default function EditEventPage({ evt }) {
   )
 }
 
-export async function getServerSideProps({ params: { id } }) {
-  const { data } = await axios.get(`${API_URL}/events/${id}`)
+export async function getServerSideProps({ params: { id }, req }) {
+  const res = await fetch(`${API_URL}/events/${id}`)
+  const evt = await res.json()
+
+  console.log(req.headers.cookie)
+
   return {
     props: {
-      evt: data,
+      evt,
     },
   }
 }
