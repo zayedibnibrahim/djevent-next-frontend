@@ -30,7 +30,7 @@ export default function EventPage({ evt }) {
     <Layout title={evt.name}>
       <ToastContainer theme='dark' />
       <div className={styles.event}>
-        <div className={styles.controls}>
+        {/* <div className={styles.controls}>
           <Link href={`/events/edit/${evt.id}`}>
             <a>
               <FaPencilAlt /> Edit Event
@@ -39,7 +39,7 @@ export default function EventPage({ evt }) {
           <a href='#' className={styles.delete} onClick={deleteEvent}>
             <FaTimes /> Delete Event
           </a>
-        </div>
+        </div> */}
 
         <span>
           {new Date(evt.date).toLocaleDateString('en-US')} at {evt.time}

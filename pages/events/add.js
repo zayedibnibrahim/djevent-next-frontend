@@ -6,8 +6,9 @@ import styles from '@/styles/Form.module.css'
 import { useState } from 'react'
 import { API_URL } from '@/config/index'
 import { useRouter } from 'next/router'
+import { parseCookies } from '@/helpers/index'
 
-export default function AddEventPage() {
+export default function AddEventPage({ token }) {
   const router = useRouter()
 
   const [values, setValues] = useState({
@@ -36,11 +37,16 @@ export default function AddEventPage() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(values),
     })
 
     if (!res.ok) {
+      if (res.status === 403 || res.status === 401) {
+        toast.error('No token included')
+        return
+      }
       toast.error('Something Went Wrong')
     } else {
       const evt = await res.json()
@@ -136,4 +142,14 @@ export default function AddEventPage() {
       </form>
     </Layout>
   )
+}
+
+export async function getServerSideProps({ req }) {
+  const { token } = parseCookies(req)
+
+  return {
+    props: {
+      token,
+    },
+  }
 }
