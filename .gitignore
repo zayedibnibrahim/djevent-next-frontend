@@ -14,7 +14,7 @@
 
 # production
 /build
-
+.eslintrc.json
 # misc
 .DS_Store
 *.pem
